@@ -11,6 +11,7 @@ class Application:
         self.root.bind("<space>", self.on_space_pressed)
         self.root.bind("<BackSpace>", self.on_backspace_pressed)
         self.root.bind("<Return>", self.on_return_pressed)
+        self.root.bind("<KeyPress>", self.on_keydown)
 
         self.root.mainloop()
     
@@ -26,6 +27,9 @@ class Application:
         self.cursor_manager.cursor_next_line()
         self.cursor_manager.draw_cursor()
 
+    def on_keydown(self, event):
+        self.cursor_manager.draw_character(event.char)
+
 class CanvasManager:
     def __init__(self, root):
         self.canv_x = 400
@@ -39,39 +43,44 @@ class CanvasManager:
 class CursorManager:
     def __init__(self, canvas_manager):
         self.canv = canvas_manager.get_canvas()
-        cursor_origin = 10
-        cursor_max_x = 385
-        cursor_limit_y = 370
-        cursor_jump_x = 18
-        cursor_jump_y = 15
-        self.cursor_x = cursor_origin
-        self.cursor_y = cursor_origin
+        self.cursor_line_height = 20
+        self.cursor_origin = 10
+        self.cursor_max = 385
+        self.cursor_min = 20
+        self.cursor_jump_x = 5
+        self.cursor_jump_y = 18
+        self.cursor_x = self.cursor_origin
+        self.cursor_y = self.cursor_origin
         
         self.draw_cursor()
 
     def draw_cursor(self):
         self.canv.delete("cursor")
-        self.canv.create_line(self.cursor_x, self.cursor_y, self.cursor_x, self.cursor_y + 20, tags="cursor")
+        self.canv.create_line(self.cursor_x, self.cursor_y, self.cursor_x, self.cursor_y + self.cursor_line_height, tags="cursor")
+
+    def draw_character(self,char):
+        self.canv.create_text(self.cursor_x + self.cursor_origin,self.cursor_y + self.cursor_origin, text=char)
+        self.cursor_increase()
+        self.draw_cursor()
 
     def cursor_increase(self):
-        self.cursor_x += 15
-        if self.cursor_x > 385:
-            if self.cursor_y < 370:
-                self.cursor_y += 18
-            self.cursor_x = 10
+        self.cursor_x += self.cursor_jump_x
+        if self.cursor_x > self.cursor_max:
+            if self.cursor_y < self.cursor_max:
+                self.cursor_y += self.cursor_jump_y
+            self.cursor_x = self.cursor_origin
         
     def cursor_decrease(self):
-        self.cursor_x -= 15
-        if self.cursor_x < 5:
-            if self.cursor_y > 20 or self.cursor_y > 385:
-                self.cursor_y -= 18
-            self.cursor_x = 10
+        self.cursor_x -= self.cursor_jump_x
+        if self.cursor_x < self.cursor_min:
+            if self.cursor_y > self.cursor_min or self.cursor_y > self.cursor_max:
+                self.cursor_y -= self.cursor_jump_y
+            self.cursor_x = self.cursor_origin
         
     def cursor_next_line(self):
-        if self.cursor_y < 370:
-            self.cursor_y += 18
+        if self.cursor_y < self.cursor_max:
+            self.cursor_y += self.cursor_jump_y
+
         
-
-
 if __name__ == "__main__":
     app = Application()

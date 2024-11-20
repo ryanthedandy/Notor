@@ -21,10 +21,6 @@ class Application:
     def character_width(event=None,character=None):
         font = tkFont.Font(font='times')
         width = font.measure(character)
-
-        print(width)
-
-
         return width
 
     
@@ -67,7 +63,7 @@ class CursorManager:
         self.cursor_line_height = 14
         self.cursor_origin = 5.5
         self.cursor_max = 388
-        self.cursor_min = 20
+        self.cursor_min = 10
         self.cursor_jump_x = 5
         self.cursor_jump_y = 19.1
         self.cursor_x = self.cursor_origin
@@ -111,3 +107,11 @@ class CursorManager:
         
 if __name__ == "__main__":
     app = Application()
+
+
+# to do:
+# fix the incomplete lines backpace issue. every 'return create a saved x value' once you reach the back limit use that saved x value?'
+# cursor movement
+# mouse click to move cursor
+# add save
+# add load

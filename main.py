@@ -16,6 +16,7 @@ class Application:
         self.root.bind("<Return>", self.on_return_pressed)
         self.root.bind("<KeyPress>", self.on_keydown)
         self.root.bind("<Escape>", self.on_escape)
+        self.root.bind("<Tab>", self.on_tab)
 
         self.root.mainloop()
     
@@ -24,8 +25,13 @@ class Application:
         width = font.measure(character)
         return width 
 
+    def on_tab(self, event):
+        self.text += " "
+        self.cursor_manager.cursor_increase(distance=self.character_width(" "))
+        self.cursor_manager.draw_cursor()
     
     def on_space_pressed(self, event):
+
         self.text += " "
         self.cursor_manager.cursor_increase(distance=self.character_width(" "))
         self.cursor_manager.draw_cursor()
@@ -46,8 +52,10 @@ class Application:
         self.cursor_manager.draw_cursor(return_pressed=True)
 
     def on_keydown(self, event):
+
         if(event.keycode == 16):
             return
+        print(event.keycode)
         self.text += f"{event.char}"
         self.cursor_manager.draw_character(self.text,backspace=False,width=self.character_width(event.char))
 
@@ -95,7 +103,6 @@ class CursorManager:
         if(not backspace):
             self.cursor_increase(width)
         else:
-            print(width)
             self.cursor_decrease(width)
         self.draw_cursor()
 
@@ -104,8 +111,7 @@ class CursorManager:
         self.cursor_x += int(distance)
         if self.cursor_x > self.cursor_max:
             if self.cursor_y < self.cursor_max:
-                self.cursor_y += self.cursor_jump_y
-                self.current_line += 1
+                self.cursor_next_line()
             self.cursor_x = self.cursor_origin
         
     def cursor_decrease(self,distance=None):
@@ -147,7 +153,7 @@ if __name__ == "__main__":
 
 
 # to do:
-# fix backspace on empty
+# if you hold space bar after next line it gets super funky buggy
 # fix last line shenanigans
 # cursor movement
 # mouse click to move cursor

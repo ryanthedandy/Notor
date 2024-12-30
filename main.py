@@ -52,12 +52,18 @@ class Application:
         self.cursor_manager.draw_cursor(return_pressed=True)
 
     def on_keydown(self, event):
-
         if(event.keycode == 16):
+            return
+        if(event.keycode == 49):
+            self.save_file()
             return
         print(event.keycode)
         self.text += f"{event.char}"
         self.cursor_manager.draw_character(self.text,backspace=False,width=self.character_width(event.char))
+    
+    def save_file(self):
+        with open("output.txt","w") as file:
+            file.write(self.text)
 
     def on_escape(self, event):
         self.root.destroy()
